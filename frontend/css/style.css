@@ -7,6 +7,10 @@ body {
   color: white;
 }
 
+.green-btn:hover {
+  color: white;
+}
+
 .logo {
   padding: 10px;
 }
@@ -15,9 +19,13 @@ body {
   color: white;
 }
 
-.nav-pills>li.active>a, .nav-pills>li.active>a:hover {
+/*.nav-pills>li.active>a, .nav-pills>li.active>a:hover {
   background-color: #d5b99d;
 }
+
+.nav-pills>li.active>a:focus {
+  background-color: #d5b99d;
+}*/
 
 .nav>li>a:hover {
   color: black;
@@ -93,4 +101,27 @@ body {
 
 .option-values {
   text-align: left;
+}
+
+input.ng-invalid.ng-dirty {
+  border: 1px solid red;
+}
+
+form > label, button {
+  margin-top: 15px;
+}
+.passwordConfirm {
+  margin-top: 5px;
+}
+
+.well img {
+  padding-bottom: 10px;
+}
+
+.formInput {
+  padding: 10px;
+}
+
+.right{
+  float: right;
 }
