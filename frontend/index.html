@@ -9,20 +9,22 @@
   <body>
     <div class="container-fluid">
       <div class="row header">
-        <div class="col col-xs-12">
+        <div class="col col-xs-3">
           <img class="img-responsive logo" src="/images/dc-roasters.png" alt="logo" />
+        </div>
+        <div class="col col-xs-3 col-xs-offset-6">
+          <a href="#/login" ng-show="!isLoggedIn()">Login</a>
+          <a href="#/register" ng-show="!isLoggedIn()">Signup</a>
+          <a ng-show="isLoggedIn()" ng-click="logout()">Logout</a>
         </div>
       </div>
       <div class="row navigation">
         <div class="col col-xs-12">
           <ul class="nav nav-pills nav-justified">
-            <li ng-class="{active: isActive('/')}"><a href="#/">Home</a></li>
-            <li ng-class="{active: isActive('/options')}"><a href="#/options">Options</a></li>
-            <li ng-class="{active: isActive('/delivery')}"><a href="#/delivery">Delivery</a></li>
-            <li ng-class="{active: isActive('/payment')}"><a href="#/payment">Payment</a></li>
-            <li><button type="submit" class="btn green-btn right">Sign up</button></li>
-            <li><button type="submit" class="btn green-btn right">Login</button></li>
-
+            <li role="presentation" ng-class="{active: activetab }"><a href="#/">Home</a></li>
+            <li role="presentation" ng-class="{active: activetab }"><a href="#/options">Options</a></li>
+            <li role="presentation"><a>Delivery</a></li>
+            <li role="presentation"><a>Payment</a></li>
           </ul>
         </div>
       </div> <!-- end navigation> -->

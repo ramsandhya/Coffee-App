@@ -1,51 +1,48 @@
 // define app module with ngRoute and ngCookies dependencies
 var coffeeApp = angular.module('coffeeApp', ['ngRoute', 'ngCookies', 'ngMessages']);
 
+// backend running on port 8000
 var API = "http://localhost:8000";
 
-var order = {
-  quantity: 0,
-  grindType: ""
-};
 
 // define routing
 coffeeApp.config(function($routeProvider) {
   $routeProvider
     .when('/', {
       controller: 'HomeController',
-      templateUrl: 'home.html'
+      templateUrl: 'home.html',
     })
     .when('/options/', {
       controller: 'OptionsController',
-      templateUrl: 'options.html'
+      templateUrl: 'options.html',
     })
     .when('/delivery', {
       controller: 'DeliveryController',
-      templateUrl: 'delivery.html'
+      templateUrl: 'delivery.html',
     })
     .when('/payment', {
       controller: 'PaymentController',
-      templateUrl: 'payment.html'
+      templateUrl: 'payment.html',
     })
     .when('/thankyou', {
       controller: 'ThankyouController',
-      templateUrl: 'thankyou.html'
+      templateUrl: 'thankyou.html',
     })
     .when('/login', {
       controller: 'LoginController',
-      templateUrl: 'login.html'
+      templateUrl: 'login.html',
     })
     .when('/register', {
       controller: 'RegisterController',
-      templateUrl: 'register.html'
+      templateUrl: 'register.html',
     })
     .otherwise({ redirectTo: '/'});
 });
 
 coffeeApp.run(function($rootScope, $location, $cookies) {
+  // on every location change start, see where the user is attempting to go
   $rootScope.$on('$locationChangeStart', function(event, nextUrl, currentUrl) {
-    // console.log('next url', nextUrl, 'current url', currentUrl);
-    // console.log('nextUrl split', nextUrl.split('/'));
+    // get path from url
     var path = nextUrl.split('/')[4];
     // if user is going to a restricted area and doesn't have a token stored in a cookie, redirect to the login page
     var token = $cookies.get('token');
@@ -53,17 +50,44 @@ coffeeApp.run(function($rootScope, $location, $cookies) {
       $rootScope.goHere = path;
       $location.path('/login');
     }
+
+    // is the user logged in? used to display login, logout and signup links
+    $rootScope.isLoggedIn = function() {
+      return $cookies.get('token');
+    };
+
+    $rootScope.logout = function() {
+      $cookies.remove('token');
+    };
   });
 });
 
+// service to save order data in a cookie
+coffeeApp.service('OrderService', function($cookies) {
+  this.saveData = function(data) {
+    $cookies.put('orderdata', JSON.stringify(data));
+  };
+  this.getData = function() {
+    try {
+      return JSON.parse($cookies.get('orderdata'));
+    }
+    catch(e) {
+      return {};
+    }
+  };
+});
+
+
 coffeeApp.controller('HomeController', function($scope, $location) {
+  $scope.isActive = true;
   // directToOptions function redirect the user to /options
   $scope.directToOptions = function(){
     $location.path("/options");
   };
 });
 
-coffeeApp.controller('OptionsController', function($scope, $http, $location) {
+coffeeApp.controller('OptionsController', function($scope, $http, $location, OrderService) {
+  $scope.isActive = true;
   // call the backend to receive a list of coffee type options
   $http.get(API + '/options')
     .then(function(response) {
@@ -74,52 +98,55 @@ coffeeApp.controller('OptionsController', function($scope, $http, $location) {
       console.error(err);
     });
 
-  $scope.orderIndividual = function() {
-    order.quantity = $scope.quantityInd;
-    order.grindType = $scope.grindTypeInd;
-    order.frequency = $scope.frequencyInd;
-    order.amount = $scope.quantityInd * 20;
+  //save the order using OrderService
+  $scope.storeOrder = function(type) {
+    var data = OrderService.getData();
+    if (type === 'ind') {
+      data.quantity = $scope.quantityInd;
+      data.grindType = $scope.grindTypeInd;
+      data.frequency = $scope.frequencyInd;
+      data.amount = $scope.quantityInd * 20;
+    } else if (type === 'fam') {
+      data.quantity = $scope.quantityFam;
+      data.grindType = $scope.grindTypeFam;
+      data.frequency = $scope.frequencyFam;
+      data.amount = $scope.quantityFam * 20;
+    }
+    OrderService.saveData(data);
     $location.path("/delivery");
   };
-
-  $scope.orderFamily = function() {
-    order.quantity = $scope.quantityFam;
-    order.grindType = $scope.grindTypeFam;
-    order.frequency = $scope.frequencyFam;
-    order.amount = $scope.quantityFam * 20;
-    $location.path("/delivery");
-  };
-
 });
 
-coffeeApp.controller('DeliveryController', function($scope, $location) {
+coffeeApp.controller('DeliveryController', function($scope, $location, OrderService) {
   $scope.processDeliveryInfo = function() {
-    // attach form field inputs to the scope
-    order.fullname = $scope.fullname;
-    order.address1 = $scope.address1;
+    var data = OrderService.getData();
+    data.fullname = $scope.fullname;
+    data.address1 = $scope.address1;
     if ($scope.address2 === undefined) {
       $scope.address2 = "N/A";
     }
-    order.address2 = $scope.address2;
-    order.city = $scope.city;
-    order.state = $scope.state;
-    order.zipcode = $scope.zipcode;
-    order.date = $scope.date;
+    data.address2 = $scope.address2;
+    data.city = $scope.city;
+    data.state = $scope.state;
+    data.zipcode = $scope.zipcode;
+    data.date = $scope.date;
 
+    //save order data to cookie with OrderService
+    OrderService.saveData(data);
     // redirect to payment page
     $location.path("/payment");
-
   };
 });
 
-coffeeApp.controller('PaymentController', function($scope, $http, $location, $cookies) {
+coffeeApp.controller('PaymentController', function($scope, $http, $location, $cookies, OrderService) {
   // attach current order information to scope
+  var order = OrderService.getData();
   $scope.order = order;
-  var amount = order.amount;
+  var amount = order.amount * 100;
   var userToken = $cookies.get('token');
 
   $scope.processPayment = function() {
-    //stripe
+    // stripe
     // Creates a CC handler which could be reused.
     var handler = StripeCheckout.configure({
       // my testing public publishable key

@@ -7,28 +7,32 @@ body {
   color: white;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.header a {
+  text-decoration: none;
+  color: white;
+  padding: 10px;
+}
+
 .green-btn:hover {
   color: white;
 }
 
 .logo {
   padding: 10px;
+  max-width: 100px;
 }
 
 .nav-pills>li>a{
   color: white;
 }
 
-/*.nav-pills>li.active>a, .nav-pills>li.active>a:hover {
-  background-color: #d5b99d;
-}
-
-.nav-pills>li.active>a:focus {
-  background-color: #d5b99d;
-}*/
-
-.nav>li>a:hover {
-  color: black;
+.nav>li>a:focus, .nav>li>a:hover {
+  color: #284741;
 }
 
 .navigation {
@@ -45,8 +49,9 @@ body {
   background-size: cover;
 }
 
-.hero-text {
-  vertical-align: middle;
+.hero, .howitworks, .one, .two, .three {
+  display: flex;
+  align-items: center;
 }
 
 .one {
@@ -71,7 +76,6 @@ body {
   -webkit-transform: rotate(-15deg); /* Safari */
   transform: rotate(-15deg); /* Standard syntax */
   margin-left: 50px;
-  margin-top: 50px;
 }
 
 .three {
@@ -120,8 +124,4 @@ form > label, button {
 
 .formInput {
   padding: 10px;
-}
-
-.right{
-  float: right;
 }
