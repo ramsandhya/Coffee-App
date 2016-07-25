@@ -13,9 +13,9 @@ var app = express();
 
 app.use(express.static(__dirname + '/frontend'));
 
-app.get('/', function(req, res){
-    res.sendfile('index.html', { root: __dirname + "/frontend" } );
-});
+// app.get('/', function(req, res){
+//     res.sendfile('index.html', { root: __dirname + "/frontend" } );
+// });
 
 // connect to the database
 mongoose.connect(process.env.MONGODB_URI);
