@@ -10,6 +10,7 @@ var stripe = require('stripe')('sk_test_21GqyNJXaHJvtsAXM5ajuM9k');
 mongoose.Promise = Promise; // use bluebird with mongoose
 
 var app = express();
+app.set('port', (process.env.PORT || 8000));
 
 app.use(express.static(__dirname + '/frontend'));
 
@@ -238,6 +239,6 @@ function authRequired(req, res, next) {
     });
 }
 
-app.listen(8000, function() {
-  console.log('Listening on 8000...');
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });
