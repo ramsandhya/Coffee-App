@@ -2,7 +2,7 @@
 var coffeeApp = angular.module('coffeeApp', ['ngRoute', 'ngCookies', 'ngMessages']);
 
 // backend running on port 8000
-var API = "http://localhost:8000";
+var API = "https://mycoffeestore.herokuapp.com";
 
 
 // define routing

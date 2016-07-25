@@ -18,7 +18,7 @@ app.get('/', function(req, res){
 });
 
 // connect to the database
-mongoose.connect('mongodb://' + credentials.username + ':' + credentials.password + '@ds029735.mlab.com:29735/heroku_w3v2chpz');
+mongoose.connect(process.env.MONGODB_URI);
 
 // mongodb model for users
 var User = mongoose.model('User', {
